@@ -11,7 +11,8 @@ module.exports = (sequelize,Datatypes) =>{
         },
         lichHoc:{
             type: Datatypes.STRING(50),
-            allowNull: false
+            allowNull: false,
+            unique: true,
         }
         
     }, {
