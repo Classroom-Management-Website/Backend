@@ -59,10 +59,10 @@ const getStudentsByClassroom = async (req, res) => {
 
         // Lấy danh sách học sinh
         const students = await Students.findAll({
-            where: { maLop: maLop }
+            where: { maLop: maLop },
         });
 
-        res.status(200).json(students);
+        res.status(200).json({ classroom, students });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
