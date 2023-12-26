@@ -6,14 +6,18 @@ module.exports = (sequelize,Datatypes) =>{
             autoIncrement: true
         },
         tenHs:{
-            type: Datatypes.STRING(50),
+            type: Datatypes.STRING,
             allowNull: false
         },
         ngaySinh:{
-            type: Datatypes.STRING(50),
+            type: Datatypes.STRING,
             allowNull: true
         },
         soBuoiVang:{
+            type: Datatypes.INTEGER,
+            allowNull: true
+        },
+        thongTinBuoiVang:{
             type: Datatypes.INTEGER,
             allowNull: true
         }

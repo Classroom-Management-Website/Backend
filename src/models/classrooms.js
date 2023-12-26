@@ -6,11 +6,11 @@ module.exports = (sequelize,Datatypes) =>{
             autoIncrement: true,
         },
         tenLopHoc:{
-            type: Datatypes.STRING(50),
+            type: Datatypes.STRING,
             allowNull: false
         },
         lichHoc:{
-            type: Datatypes.STRING(50),
+            type: Datatypes.STRING,
             allowNull: false,
             unique: true,
         }

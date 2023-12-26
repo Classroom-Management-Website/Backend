@@ -142,8 +142,7 @@ const getClassroomsByTeacher = async (req, res) =>{
                 where: {maGv},
                 attributes: { exclude: ['maGv'] }
             })
-            // console.log(classrooms)
-            res.status(200).json({ classrooms: classrooms, message: "Success" });
+            res.status(200).json(classrooms);
         } else {
             res.status(404).json({ error: "Teacher not found for the given userName" });
         }

@@ -7,21 +7,21 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         userName:{
-            type: DataTypes.STRING(10),
+            type: DataTypes.STRING,
             allowNull: false,
             unique: true
         },
         passWord:{
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING,
             allowNull: false,
         },
         sdt:{
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING,
             allowNull: false,
             unique: true
         },
         fullName:{
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING,
             allowNull: true,
         }
     }, {
