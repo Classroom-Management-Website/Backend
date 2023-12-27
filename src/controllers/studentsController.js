@@ -2,7 +2,7 @@ const db = require('../models')
 const Classrooms = db.classrooms
 const Teachers = db.teachers
 const Students = db.students
-
+const { Sequelize, fn, col } = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const getTeacherMaGv = async (userName) => {
@@ -83,7 +83,7 @@ const addStudentsByClassroom = async (req, res) => {
         if (!classroom) {
             return res.status(403).json({ error: "Lớp học này không thuộc của bạn" });
         }
-        const student = await Students.create({tenHs,ngaySinh,soBuoiVang,maLop})
+        const student = await Students.create({ tenHs, ngaySinh, soBuoiVang, maLop })
         res.status(201).json(student)
     } catch (error) {
         console.error(error);
@@ -94,7 +94,7 @@ const addStudentsByClassroom = async (req, res) => {
 const deleteStudentsByClassroom = async (req, res) => {
     try {
         const { maLop } = req.params;
-        const {maHs} = req.body
+        const { maHs } = req.body
         const userName = req.userName;
         const maGv = await getTeacherMaGv(userName);
         // Kiểm tra xem lớp học có thuộc về giáo viên này không
@@ -108,7 +108,7 @@ const deleteStudentsByClassroom = async (req, res) => {
 
         // Kiểm tra xem lớp học có tồn tại và thuộc về giáo viên đang đăng nhập không
         const deletedRowsCount = await Students.destroy({
-            where: { maHs:maHs, maLop: maLop }
+            where: { maHs: maHs, maLop: maLop }
         });
 
         if (deletedRowsCount === 0) {
@@ -127,7 +127,7 @@ const deleteStudentsByClassroom = async (req, res) => {
 const updateStudentsByClassroom = async (req, res) => {
     try {
         const { maLop } = req.params;
-        const {maHs,tenHs, ngaySinh, soBuoiVang} = req.body
+        const { maHs, tenHs, ngaySinh, soBuoiVang } = req.body
         const userName = req.userName;
         const maGv = await getTeacherMaGv(userName);
         // Kiểm tra xem lớp học có thuộc về giáo viên này không
@@ -156,11 +156,55 @@ const updateStudentsByClassroom = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+const addAttendanceInfo = async (req, res) => {
+    try {
+        const { maLop } = req.params;
+        const { danhSachMaHs, thoiGianVang } = req.body;
+        const userName = req.userName;
+        const maGv = await getTeacherMaGv(userName);
 
-module.exports={
+        const classroom = await Classrooms.findOne({
+            where: { maLop: maLop, maGv: maGv }
+        });
+
+        if (!classroom) {
+            return res.status(403).json({ error: "Lớp học này không thuộc về bạn" });
+        }
+
+        for (const maHs of danhSachMaHs) {
+            const student = await Students.findOne({ where: { maHs } });
+
+            if (!student) {
+                continue;
+            }
+
+            // Lấy giá trị hiện tại của thongTinBuoiVang
+            const existingThongTinBuoiVang = JSON.parse(student.thongTinBuoiVang) || [];
+
+            // Thêm giá trị mới vào mảng
+            const updatedThongTinBuoiVang = [...existingThongTinBuoiVang, thoiGianVang];
+
+            // Cập nhật thông tin buổi vắng
+            await Students.update(
+                { thongTinBuoiVang: JSON.stringify(updatedThongTinBuoiVang) },
+                { where: { maHs } }
+            );
+        }
+
+        res.status(200).json({ message: "Điểm danh thành công" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+module.exports = {
     verifyToken,
     getStudentsByClassroom,
     addStudentsByClassroom,
     deleteStudentsByClassroom,
-    updateStudentsByClassroom
+    updateStudentsByClassroom,
+    addAttendanceInfo
 }

@@ -1,3 +1,4 @@
+
 module.exports = (sequelize,Datatypes) =>{
     const Students = sequelize.define("students",{
         maHs:{
@@ -18,9 +19,9 @@ module.exports = (sequelize,Datatypes) =>{
             allowNull: true
         },
         thongTinBuoiVang:{
-            type: Datatypes.INTEGER,
-            allowNull: true
-        }
+            type: Datatypes.STRING, 
+            allowNull: true,
+        },
     }, {
         // // Vô hiệu hóa cột updatedAt
         // updatedAt: false,

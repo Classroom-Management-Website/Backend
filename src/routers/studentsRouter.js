@@ -7,4 +7,5 @@ router.get('/:maLop',studentsController.verifyToken,studentsController.getStuden
 router.post('/:maLop',studentsController.verifyToken,studentsController.addStudentsByClassroom)
 router.delete('/:maLop',studentsController.verifyToken,studentsController.deleteStudentsByClassroom)
 router.put('/:maLop',studentsController.verifyToken,studentsController.updateStudentsByClassroom)
+router.put('/diemdanh/:maLop',studentsController.verifyToken,studentsController.addAttendanceInfo)
 module.exports = router
