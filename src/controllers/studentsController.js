@@ -2,7 +2,6 @@ const db = require('../models')
 const Classrooms = db.classrooms
 const Teachers = db.teachers
 const Students = db.students
-const { Sequelize, fn, col } = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const getTeacherMaGv = async (userName) => {

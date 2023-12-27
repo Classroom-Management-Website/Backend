@@ -7,6 +7,8 @@ router.post('/',classroomsController.verifyToken ,classroomsController.addClassr
 
 router.put('/:maLop',classroomsController.verifyToken, classroomsController.updateClassroom);
 
+router.put('/diemdanh/:maLop',classroomsController.verifyToken, classroomsController.diemDanh);
+
 router.delete('/:maLop',classroomsController.verifyToken, classroomsController.deleteClassroom);
 
 router.get('/',classroomsController.verifyToken, classroomsController.getClassroomsByTeacher);

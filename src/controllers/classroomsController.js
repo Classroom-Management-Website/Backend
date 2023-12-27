@@ -151,6 +151,48 @@ const getClassroomsByTeacher = async (req, res) =>{
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const diemDanh = async (req, res) => {
+    try {
+        const { maLop } = req.params;
+        const { thoiGianDiemDanh } = req.body;
+        const userName = req.userName;
+        const maGv = await getTeacherMaGv(userName);
+
+        const classroom = await Classrooms.findOne({
+            where: { maLop: maLop, maGv: maGv }
+        });
+
+        if (!classroom) {
+            return res.status(403).json({ error: "Lớp học này không thuộc về bạn" });
+        }
+
+        // Lấy giá trị hiện tại của thongTinBuoiVang
+        const existingThongTinBuoiVang = JSON.parse(classroom.thongTinDiemDanh) || [];
+
+        // Kiểm tra giá trị thoiGianVang
+        if (thoiGianDiemDanh) {
+            // Thêm giá trị mới vào mảng nếu nó không tồn tại
+            if (!existingThongTinBuoiVang.includes(thoiGianDiemDanh)) {
+                existingThongTinBuoiVang.push(thoiGianDiemDanh);
+
+                // Cập nhật thông tin buổi vắng
+                await Classrooms.update(
+                    { thongTinDiemDanh: JSON.stringify(existingThongTinBuoiVang) },
+                    { where: { maGv, maLop } }
+                );
+
+                res.status(200).json({ message: "Điểm danh thành công" });
+            } else {
+                res.status(200).json({ message: "Thời gian đã được điểm danh trước đó" });
+            }
+        } else {
+            res.status(400).json({ error: "Thiếu thời gian vắng" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
 
 module.exports = {
     addClassroom,
@@ -158,4 +200,5 @@ module.exports = {
     deleteClassroom,
     getClassroomsByTeacher,
     verifyToken,
+    diemDanh,
 };

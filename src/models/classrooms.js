@@ -13,8 +13,11 @@ module.exports = (sequelize,Datatypes) =>{
             type: Datatypes.STRING,
             allowNull: false,
             unique: true,
-        }
-        
+        },
+        thongTinDiemDanh:{
+            type: Datatypes.TEXT, 
+            allowNull: true,
+        },
     }, {
         // // Vô hiệu hóa cột updatedAt
         // updatedAt: false,

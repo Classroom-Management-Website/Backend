@@ -19,7 +19,7 @@ module.exports = (sequelize,Datatypes) =>{
             allowNull: true
         },
         thongTinBuoiVang:{
-            type: Datatypes.STRING, 
+            type: Datatypes.TEXT, 
             allowNull: true,
         },
     }, {
