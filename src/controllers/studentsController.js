@@ -68,7 +68,7 @@ const getStudentsByClassroom = async (req, res) => {
     }
 };
 
-const addStudentsByClassroom = async (req, res) => {
+const addStudentByClassroom = async (req, res) => {
     try {
         const { tenHs, ngaySinh, soBuoiVang } = req.body;
         const { maLop } = req.params;
@@ -84,6 +84,36 @@ const addStudentsByClassroom = async (req, res) => {
         }
         const student = await Students.create({ tenHs, ngaySinh, soBuoiVang, maLop })
         res.status(201).json(student)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+const addStudentsByClassroom = async (req, res) => {
+    try {
+        const students = req.body; // Dữ liệu đầu vào là một mảng các học sinh
+        const { maLop } = req.params;
+        const userName = req.userName;
+        const maGv = await getTeacherMaGv(userName);
+        
+        // Kiểm tra xem lớp học có thuộc về giáo viên này không
+        const classroom = await Classrooms.findOne({
+            where: { maLop: maLop, maGv: maGv }
+        });
+
+        if (!classroom) {
+            return res.status(403).json({ error: "Lớp học này không thuộc của bạn" });
+        }
+
+        // Thêm từng học sinh vào cơ sở dữ liệu
+        const addedStudents = [];
+        for (const student of students) {
+            const { tenHs, ngaySinh, soBuoiVang } = student;
+            const newStudent = await Students.create({ tenHs, ngaySinh, soBuoiVang, maLop });
+            addedStudents.push(newStudent);
+        }
+
+        res.status(201).json(addedStudents);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -126,7 +156,7 @@ const deleteStudentsByClassroom = async (req, res) => {
 const updateStudentsByClassroom = async (req, res) => {
     try {
         const { maLop } = req.params;
-        const { maHs, tenHs, ngaySinh, soBuoiVang } = req.body
+        const { maHs, tenHs, ngaySinh, soBuoiVang,thongTinBuoiVang } = req.body
         const userName = req.userName;
         const maGv = await getTeacherMaGv(userName);
         // Kiểm tra xem lớp học có thuộc về giáo viên này không
@@ -139,7 +169,7 @@ const updateStudentsByClassroom = async (req, res) => {
         }
 
         const [updatedRowsCount, updatedStudent] = await Students.update(
-            { tenHs, ngaySinh, soBuoiVang, maLop },
+            { tenHs, ngaySinh, soBuoiVang, maLop,thongTinBuoiVang },
             { where: { maHs }, returning: true }
         );
 
@@ -202,6 +232,7 @@ const addAttendanceInfo = async (req, res) => {
 module.exports = {
     verifyToken,
     getStudentsByClassroom,
+    addStudentByClassroom,
     addStudentsByClassroom,
     deleteStudentsByClassroom,
     updateStudentsByClassroom,
